@@ -1,12 +1,12 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import plotly.express as px
 from plotly.subplots import make_subplots
 
 def get_contrast_color(hex_color):
     """Calcule si le texte doit être blanc ou noir selon le fond"""
     if hex_color.startswith('rgba'):
-        # Pour les couleurs transparentes (Retour), on considère le fond noir du mode dark
         return "white"
     hex_color = hex_color.lstrip('#')
     r, g, b = int(hex_color[0:2], 16), int(hex_color[2:4], 16), int(hex_color[4:6], 16)
@@ -14,7 +14,9 @@ def get_contrast_color(hex_color):
     return "white" if brightness < 128 else "black"
 
 def show_flux_control_charts():
+    """Affiche les graphiques de contrôle des flux (Aller/Retour)"""
     if "data" not in st.session_state or "m_flux" not in st.session_state["data"]:
+        st.info("💡 Les graphiques de flux apparaîtront ici après l'import des données.")
         return
 
     df = st.session_state["data"]["m_flux"].copy()
@@ -54,7 +56,7 @@ def show_flux_control_charts():
     fig = make_subplots(
         rows=2, cols=1,
         shared_xaxes=True,
-        vertical_spacing=0.08, # Augmenté pour éviter la superposition
+        vertical_spacing=0.08,
         specs=[[{"type": "bar"}], [{"type": "table"}]]
     )
 
@@ -94,15 +96,14 @@ def show_flux_control_charts():
     ), row=2, col=1)
 
     fig.update_layout(
-        #title="Répartition par Fonction (Barre GAUCHE = Aller | Barre DROITE = Retour)",
-        barmode='stack', template="plotly_dark", height=500, # Hauteur augmentée
+        barmode='stack', template="plotly_dark", height=500,
         margin=dict(t=0, b=0, l=10, r=10),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0, font=dict(size=10))
     )
     
     st.plotly_chart(fig, use_container_width=True)
 
-    # --- DÉTAIL PAR FONCTION SUPPORT (AVEC CONTRASTE) ---
+    # --- DÉTAIL PAR FONCTION ---
     st.markdown("### 🔍 Détail par Fonction Support")
     for f in fonctions:
         df_sub = df_long[df_long[col_fonc] == f].groupby(["Jour", col_sens], observed=False)["Valeur"].sum().reset_index()
@@ -115,13 +116,45 @@ def show_flux_control_charts():
                 for sens in ["Aller", "Retour"]:
                     sub_s = df_sub[df_sub[col_sens] == sens]
                     color = base_color if sens == "Aller" else dark_color
-                    
                     fig_sub.add_trace(go.Bar(
                         name=sens, x=sub_s["Jour"], y=sub_s["Valeur"],
                         marker_color=color,
                         text=sub_s["Valeur"].apply(lambda x: int(x) if x > 0 else ""),
                         textposition='auto',
-                        textfont=dict(color=get_contrast_color(color)) # Correction contraste ici
+                        textfont=dict(color=get_contrast_color(color))
                     ))
                 fig_sub.update_layout(template="plotly_dark", barmode="group", height=300)
                 st.plotly_chart(fig_sub, use_container_width=True)
+
+def show_volumes():
+    """Affiche la page d'analyse des volumes de distribution par site"""
+    st.title("🚚 Volumes de Distribution par Site")
+    
+    if "data" not in st.session_state or "m_flux" not in st.session_state["data"]:
+        st.warning("⚠️ Aucune donnée disponible. Veuillez importer le fichier Excel.")
+        return
+
+    df = st.session_state["data"]["m_flux"].copy()
+    
+    # Agrégation simplifiée par site pour la distribution
+    st.subheader("Analyse de la charge par établissement")
+    
+    df_site = df.groupby("Site hospitalier").sum(numeric_only=True)
+    jours = [c for c in df_site.columns if "Quantité" in c]
+    
+    if jours:
+        # Graphique des sites les plus volumineux
+        df_total_site = df_site[jours].sum(axis=1).sort_values(ascending=False).reset_index()
+        df_total_site.columns = ["Site", "Volume Total Hebdo"]
+        
+        fig = px.bar(df_total_site.head(15), x="Volume Total Hebdo", y="Site", 
+                     orientation='h', title="Top 15 des sites (Volume Hebdo)",
+                     color="Volume Total Hebdo", color_continuous_scale="Viridis")
+        
+        st.plotly_chart(fig, use_container_width=True)
+        
+        # Tableau détaillé
+        with st.expander("Voir le tableau complet des volumes par site"):
+            st.dataframe(df_site[jours], use_container_width=True)
+    else:
+        st.info("Les colonnes de quantités n'ont pas été détectées dans le fichier.")
