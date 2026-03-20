@@ -34,8 +34,8 @@ with st.sidebar:
     st.divider()
 
     # Menu Dynamique
-    options = ["Accueil", "Calcul Matrices", "Importer Données", "Volumes Distribution", "Passages Biologie", "Optimisation"]
-    icons = ["house", "geo-alt", "cloud-upload", "truck", "microscope", "play-circle"]
+    options = ["Accueil", "Calcul Matrices", "Importer Données", "Volumes Distribution", "Passages Biologie", "Optimisation","Détail tournées"]
+    icons = ["house", "geo-alt", "cloud-upload", "truck", "microscope", "play-circle","truck"]
 
     if st.session_state.sim_lancee:
         options += ["Détail tournées", "Exporter"]
