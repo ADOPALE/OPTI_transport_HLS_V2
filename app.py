@@ -79,20 +79,22 @@ if selected == "Accueil":
     st.title("📍 Optimisation des flux logistiques")
     st.info("Sélectionnez une étape dans le menu de gauche pour commencer.")
 
-# PAGE qui permet de recalculer les distances et les durées entre les adresses.
+# PAGE CALCUL MATRICES DISTANCES ET DUREES qui permet de recalculer les distances et les durées entre les adresses renseignées. 
 elif selected == "Calcul Matrices distance et durées":
     # Outil de calcul des distances GPS / temps de trajet
     run_matrix_tool()
 
+# PAGE IMPORTER LES DONNEES D'ENTREE
 elif selected == "Importer Données":
     show_import()
     # Si des données ont été chargées, on affiche les graphiques de visualisation
     if "data" in st.session_state:
         show_flux_control_charts()
 
-elif selected == "Volumes Distribution":
+# PAGE IMPORTER LES DONNEES D'ENTREE
+#elif selected == "Volumes Distribution":
     # Sécurité au cas où l'import de la fonction échouerait
-    show_volumes() if show_volumes else st.warning("Module de visualisation non chargé.")
+ #   show_volumes() if show_volumes else st.warning("Module de visualisation non chargé.")
 
 elif selected == "Passages Biologie":
     st.header("🔬 Configuration des passages Biologie")
