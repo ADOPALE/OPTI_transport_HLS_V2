@@ -12,7 +12,7 @@ from modules.biologie_engine import run_optimization
 def show_biologie_config():
     st.title("🧪 Paramétrage des Passages Biologie")
     # On récupère l'état du verrou
-    est_verrouille = st.session_state.biologie_verrouille
+    est_verrouille =  st.button("💾 Enregistrer la configuration", use_container_width=True, type="primary"):
 
     if not est_verrouille:
         if st.button("Enregistrer le paramétrage"):
