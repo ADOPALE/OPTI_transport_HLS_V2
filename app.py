@@ -41,9 +41,8 @@ with st.sidebar:
     # Menu statique : toutes les options sont affichées dès le départ
     options = [
         "Accueil", 
-        "Calcul Matrices", 
+        "Calcul Matrices distance et durées", 
         "Importer Données", 
-        "Volumes Distribution", 
         "Passages Biologie", 
         "Optimisation", 
         "Détail tournées", 
@@ -52,7 +51,7 @@ with st.sidebar:
     
     icons = [
         "house", "geo-alt", "cloud-upload", 
-        "truck", "microscope", "play-circle", 
+        "microscope", "play-circle", 
         "map", "file-earmark-pdf"
     ]
 
@@ -75,11 +74,13 @@ with st.sidebar:
 
 # --- 5. ROUTAGE (AFFICHAGE DES PAGES) ---
 
+# PAGE ACCUEIL : détailler l'ensemble des consignes et objectifs de l'application. 
 if selected == "Accueil":
     st.title("📍 Optimisation des flux logistiques")
     st.info("Sélectionnez une étape dans le menu de gauche pour commencer.")
 
-elif selected == "Calcul Matrices":
+# PAGE qui permet de recalculer les distances et les durées entre les adresses.
+elif selected == "Calcul Matrices distance et durées":
     # Outil de calcul des distances GPS / temps de trajet
     run_matrix_tool()
 
