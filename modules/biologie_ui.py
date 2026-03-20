@@ -14,9 +14,6 @@ def show_biologie_config():
     # On récupère l'état du verrou
     est_verrouille = st.session_state.biologie_verrouille
 
-    # Si c'est verrouillé, les champs deviennent grisés/inutilisables
-    frequence = st.number_input("Fréquence des passages", value=2, disabled=est_verrouille)
-
     if not est_verrouille:
         if st.button("Enregistrer le paramétrage"):
             st.session_state.biologie_verrouille = True
