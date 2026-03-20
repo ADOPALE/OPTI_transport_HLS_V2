@@ -164,7 +164,7 @@ def show_detail_tournees():
         site_sel = st.selectbox("Site à contrôler", sorted(df_p["Site"].unique()))
         fig = px.scatter(df_p[df_p["Site"]==site_sel], x="Heure", y=[site_sel]*len(df_p[df_p["Site"]==site_sel]),
                          color="V", hover_data={"Heure":False, "Label":True}, height=200)
-        fig.update_layout(xaxis=dict(tickvals=list(range(480, 1200, 60)), 
+        fig.update_layout(xaxis=dict(tickvals=list(range(180, 1380, 60)), 
                           ticktext=[f"{h//60:02d}:00" for h in range(480, 1200, 60)]), yaxis_title="")
         st.plotly_chart(fig, use_container_width=True)
 
